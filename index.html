@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>C++ OOP Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { background: #050816; color: #e9ecef; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    #root { width: 100%; max-width: 960px; }
+    .app-shell { background: #0b1020; border-radius: 16px; padding: 24px 20px 20px; box-shadow: 0 18px 40px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.06); }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: rgba(0,212,255,0.1); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); margin-bottom: 12px; }
+    .title { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.02em; }
+    .subtitle { font-size: 14px; color: #adb5bd; margin-bottom: 16px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .stat-card { padding: 12px 12px 10px; border-radius: 12px; background: radial-gradient(circle at top left, rgba(0,212,255,0.12), transparent 55%), #090d1a; border: 1px solid rgba(255,255,255,0.05); }
+    .stat-label { font-size: 11px; color: #868e96; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 4px; }
+    .stat-value { font-size: 18px; font-weight: 600; }
+    .stat-sub { font-size: 12px; color: #adb5bd; margin-top: 2px; }
+    .cluster-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .cluster-chip { padding: 4px 10px; border-radius: 999px; font-size: 12px; border: 1px solid rgba(255,255,255,0.12); cursor: pointer; color: #ced4da; background: radial-gradient(circle at top left, rgba(255,255,255,0.04), transparent 60%); transition: all 0.18s ease; }
+    .cluster-chip:hover { border-color: rgba(0,212,255,0.6); color: #fff; }
+    .cluster-chip.active { background: linear-gradient(120deg, #00d4ff, #4dabf7); color: #050816; border-color: transparent; font-weight: 600; }
+    .cluster-dot { width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; }
+    .btn-primary { margin-top: 6px; width: 100%; border: none; border-radius: 999px; padding: 10px 14px; background: linear-gradient(120deg, #00d4ff, #4dabf7); color: #050816; font-weight: 600; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 10px 30px rgba(0,212,255,0.35); transition: transform 0.15s ease, box-shadow 0.15s ease; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 14px 40px rgba(0,212,255,0.5); }
+    .btn-primary:active { transform: translateY(0); box-shadow: 0 10px 30px rgba(0,212,255,0.35); }
+    .progress-shell { position: relative; height: 8px; border-radius: 999px; background: #15192b; overflow: hidden; margin: 16px 0 10px; }
+    .progress-fill { position: absolute; inset: 0; transform-origin: left center; background: linear-gradient(90deg, #00d4ff, #4dabf7); }
+    .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #868e96; margin-bottom: 6px; }
+    .question-meta { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #868e96; margin-bottom: 8px; }
+    .question-text { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .options-grid { display: grid; gap: 10px; }
+    .option-btn { border-radius: 10px; padding: 10px 10px; border: 1px solid rgba(255,255,255,0.12); background: #090d1a; display: flex; gap: 8px; align-items: flex-start; cursor: pointer; transition: all 0.15s ease; font-size: 14px; }
+    .option-btn:hover { border-color: rgba(0,212,255,0.7); transform: translateY(-1px); }
+    .option-index { width: 22px; height: 22px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 12px; color: #ced4da; flex-shrink: 0; margin-top: 2px; }
+    .option-label { flex: 1; color: #e9ecef; }
+    .option-btn.correct { border-color: #51cf66; background: rgba(81,207,102,0.08); }
+    .option-btn.incorrect { border-color: #ff6b6b; background: rgba(255,107,107,0.08); }
+    .option-btn.disabled { pointer-events: none; opacity: 0.9; }
+    .tag { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.12); color: #ced4da; background: #090d1a; }
+    .timer-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.14); font-size: 11px; color: #f1f3f5; }
+    .timer-pill.danger { border-color: rgba(255,107,107,0.8); color: #ffc9c9; }
+    .explanation-box { margin-top: 10px; padding: 10px; border-radius: 10px; background: rgba(9,13,26,0.9); border: 1px solid rgba(255,255,255,0.15); font-size: 13px; color: #ced4da; }
+    .explanation-header { font-weight: 600; margin-bottom: 4px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #f8f9fa; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 10px; }
+    .btn-ghost { border-radius: 999px; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.16); background: transparent; color: #ced4da; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.04); }
+    .badge-mini { font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16); color: #adb5bd; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .grade-pill { padding: 6px 12px; border-radius: 999px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); }
+    .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 6px; }
+    .result-card { padding: 10px; border-radius: 10px; background: #090d1a; border: 1px solid rgba(255,255,255,0.06); font-size: 12px; display: flex; flex-direction: column; gap: 4px; }
+    .result-card.correct { border-color: rgba(81,207,102,0.7); }
+    .result-card.incorrect { border-color: rgba(255,107,107,0.7); }
+    .result-id { font-size: 11px; color: #868e96; }
+    .result-q { font-size: 12px; color: #f1f3f5; }
+    .result-ans { font-size: 11px; color: #adb5bd; }
+    .chip-small { font-size: 10px; padding: 2px 6px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.02); }
+    @media (max-width: 640px) {
+      .app-shell { padding: 18px 14px 16px; }
+      .grid { grid-template-columns: minmax(0, 1fr); }
+      .result-grid { grid-template-columns: minmax(0, 1fr); }
+      .title { font-size: 22px; }
+      .subtitle { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const questions = [
+  // Cluster 1
+  { id: "Q01", cluster: "Foundational OOP Semantics", q: "What represents a concrete instance of a class in C++ memory?", options: ["A polymorphic function", "A global variable", "An object", "A reference pointer"], answer: 2, explanation: "A class is merely a blueprint. An object is the physical instantiation of that blueprint in RAM — it occupies actual memory." },
+  { id: "Q02", cluster: "Foundational OOP Semantics", q: "Which of the following is categorically NOT a foundational pillar of OOP?", options: ["Compilation", "Inheritance", "Polymorphism", "Encapsulation"], answer: 0, explanation: "Compilation is a language-agnostic process. The 3 pillars of OOP are Encapsulation, Inheritance, and Polymorphism." },
+  { id: "Q03", cluster: "Foundational OOP Semantics", q: "What is the fundamental compiler-level difference between a struct and a class in C++?", options: ["Structs cannot contain functions", "Struct members are public by default; class members are private by default", "Classes cannot undergo inheritance", "Structs consume no stack memory"], answer: 1, explanation: "C++ retained struct for C compatibility (public default), while class enforces OOP security (private default). Structs CAN have functions and constructors in C++." },
+  { id: "Q04", cluster: "Foundational OOP Semantics", q: "Which specific keyword is used to define an object blueprint in C++?", options: ["object", "struct", "class", "template"], answer: 2, explanation: "The 'class' keyword defines a blueprint (type) from which objects are instantiated." },
+  { id: "Q05", cluster: "Foundational OOP Semantics", q: "How many primary access visibility specifiers are native to C++ OOP?", options: ["1", "2", "3", "4"], answer: 2, explanation: "C++ has exactly 3: public, private, and protected." },
+  { id: "Q06", cluster: "Foundational OOP Semantics", q: "Which feature of OOP is explicitly designed to ensure strict state security and data hiding?", options: ["Inheritance", "Encapsulation", "Abstraction", "Dynamic Dispatch"], answer: 1, explanation: "Encapsulation physically binds data with its operating functions using access specifiers to prevent arbitrary external modification." },
+  { id: "Q07", cluster: "Foundational OOP Semantics", q: "What is the technical term for creating objects from a class blueprint during runtime?", options: ["Compilation", "Execution", "Instantiation", "Serialization"], answer: 2, explanation: "Instantiation is the act of creating a concrete object from a class blueprint, allocating actual memory." },
+  { id: "Q08", cluster: "Foundational OOP Semantics", q: "Which statement most accurately defines encapsulation?", options: ["Defining global variables", "Binding data and the functions that operate on them into a single unit", "Hiding interface details", "Inheriting behavior"], answer: 1, explanation: "Encapsulation = data + methods bundled together, with access controlled via specifiers." },
+  { id: "Q09", cluster: "Foundational OOP Semantics", q: "Which of the following defines abstraction in C++ architectural design?", options: ["Binding data variables", "Inheriting from an abstract base class", "Hiding internal implementation algorithms and exposing only necessary interfaces", "Data encryption"], answer: 2, explanation: "Abstraction reduces cognitive load by hiding complex internals behind simplified public interfaces." },
+  { id: "Q10", cluster: "Foundational OOP Semantics", q: "What is the minimum memory size for an object from a completely empty class in C++?", options: ["0 bytes", "1 byte", "4 bytes", "8 bytes"], answer: 1, explanation: "The C++ standard requires a non-zero size (1 byte) so every object has a unique memory address. Zero bytes would destroy pointer arithmetic." },
+
+  // Cluster 2
+  { id: "Q11", cluster: "Constructors & Destructors", q: "What is the primary operational mandate of a constructor in C++?", options: ["To destroy an object", "To initialize an object's data members at the exact moment of creation", "To copy an object", "To allocate static memory"], answer: 1, explanation: "Constructors initialize data members at the precise moment an object is created." },
+  { id: "Q12", cluster: "Constructors & Destructors", q: "Which of the following is strictly NOT a valid type of constructor in C++?", options: ["Virtual constructor", "Default constructor", "Copy constructor", "Parameterized constructor"], answer: 0, explanation: "Virtual constructors are impossible! The vptr (needed for virtual dispatch) is initialized DURING construction — the object doesn't exist yet to have a vptr." },
+  { id: "Q13", cluster: "Constructors & Destructors", q: "In a C++ inheritance hierarchy, which constructor executes FIRST when a derived class object is instantiated?", options: ["Derived class constructor", "Base class constructor", "Both execute simultaneously", "Depends on access specifiers"], answer: 1, explanation: "The base class constructor executes first to build the memory foundation the derived class depends upon." },
+  { id: "Q14", cluster: "Constructors & Destructors", q: "What is the strict order of execution for destructors in an inheritance hierarchy?", options: ["Base to Derived", "Derived to Base", "Random order", "Parallel execution"], answer: 1, explanation: "Destructors run bottom-up (Derived → Base), the reverse of construction. This ensures derived resources are cleaned up before the base is destroyed." },
+  { id: "Q15", cluster: "Constructors & Destructors", q: "What is the declared return type of a standard C++ constructor?", options: ["void", "int", "A pointer to the object", "Constructors do not possess any return type, not even void"], answer: 3, explanation: "Constructors have NO return type — not even void. This is a unique language rule in C++." },
+  { id: "Q16", cluster: "Constructors & Destructors", q: "Which constructor type is used to instantiate a new object as an exact duplicate of an existing object?", options: ["Default constructor", "Parameterized constructor", "Copy constructor", "Move constructor"], answer: 2, explanation: "The copy constructor creates a new object by copying an existing one: ClassName(const ClassName& obj)." },
+  { id: "Q17", cluster: "Constructors & Destructors", q: "What critical operation does a compiler-generated default copy constructor perform?", options: ["A deep copy of all members", "A shallow, member-wise copy", "No copy is performed", "Dynamic memory allocation"], answer: 1, explanation: "The default copy constructor does a shallow (member-wise literal) copy — it copies pointer addresses, NOT the data they point to!" },
+  { id: "Q18", cluster: "Constructors & Destructors", q: "What is the primary peril of relying on a shallow copy when dealing with dynamically allocated memory?", options: ["High stack consumption", "Double-free memory corruption upon object destruction", "Compile-time syntax errors", "Execution latency"], answer: 1, explanation: "Two objects pointing to the same heap memory: when both destruct, the same address is freed twice → catastrophic double-free corruption crash." },
+  { id: "Q19", cluster: "Constructors & Destructors", q: "Are constructors implicitly inherited by a derived class in standard C++98/03?", options: ["Yes", "No", "Only default constructors", "Only parameterized constructors"], answer: 1, explanation: "In C++98/03, constructors are NOT inherited. C++11 introduced 'using Base::Base;' to explicitly inherit them." },
+  { id: "Q20", cluster: "Constructors & Destructors", q: "What occurs during compilation if an application attempts to instantiate a class with a private constructor from an external function?", options: ["Successful instantiation", "Memory leak", "Compile-time access error", "Runtime crash"], answer: 2, explanation: "Private constructors are only callable from within the class itself (used in Singleton pattern). External access → compile-time error." },
+
+  // Cluster 3
+  { id: "Q21", cluster: "Inheritance Architecture", q: "Which feature of OOP allows a class to acquire the properties and memory footprint of another existing class?", options: ["Encapsulation", "Polymorphism", "Abstraction", "Inheritance"], answer: 3, explanation: "Inheritance enables code reuse by letting a derived class absorb the properties and behaviors of a base class." },
+  { id: "Q22", cluster: "Inheritance Architecture", q: "Which inheritance type permits a single derived class to inherit directly from multiple separate base classes?", options: ["Multilevel inheritance", "Hierarchical inheritance", "Multiple inheritance", "Hybrid inheritance"], answer: 2, explanation: "Multiple inheritance: class D : public B, public C {}. One class, multiple parents." },
+  { id: "Q23", cluster: "Inheritance Architecture", q: "What term describes an architectural combination of multiple and multilevel inheritance?", options: ["Hierarchical inheritance", "Hybrid inheritance", "Single inheritance", "Poly-inheritance"], answer: 1, explanation: "Hybrid inheritance mixes multiple inheritance types (e.g., multiple + multilevel), often producing the Diamond Problem." },
+  { id: "Q24", cluster: "Inheritance Architecture", q: "Which members of a base class are strictly inaccessible to the derived class?", options: ["Public members", "Protected members", "Private members", "Static members"], answer: 2, explanation: "Private members are sealed to the class that declared them. Use 'protected' if derived classes need access." },
+  { id: "Q25", cluster: "Inheritance Architecture", q: "In C++, which inheritance mode causes public and protected base members to act strictly as private in the derived class?", options: ["Public inheritance", "Private inheritance", "Protected inheritance", "Virtual inheritance"], answer: 1, explanation: "Private inheritance collapses the base's public API into the derived class's private scope, blocking further inheritance of those interfaces." },
+  { id: "Q26", cluster: "Inheritance Architecture", q: "What is the notorious 'Diamond Problem' in C++ multiple inheritance?", options: ["A severe memory leak", "An ambiguity error when a class inherits from two classes sharing a common base", "An issue with uninitialized pointers", "A template resolution failure"], answer: 1, explanation: "Diamond: A→B, A→C, D inherits B & C. Two copies of A exist in D's memory. Any access to A's members is ambiguous — compiler can't choose B path or C path." },
+  { id: "Q27", cluster: "Inheritance Architecture", q: "Which C++ feature is explicitly engineered to resolve the Diamond Problem?", options: ["Virtual Destructors", "Virtual Inheritance", "Pure Virtual Functions", "Friend Classes"], answer: 1, explanation: "Virtual inheritance (class B : virtual public A) instructs the compiler to maintain only ONE shared instance of A, eliminating ambiguity via a vbase_ptr." },
+  { id: "Q28", cluster: "Inheritance Architecture", q: "What is 'Object Slicing' in standard C++?", options: ["Memory fragmentation on the heap", "Dividing object memory into parallel threads", "The loss of derived class attributes when assigning a derived object to a base class object by value", "None of the above"], answer: 2, explanation: "When a derived object is assigned to a base object by value, only base-class data fits in the allocation. Derived-specific state is physically 'sliced off' and lost." },
+  { id: "Q29", cluster: "Inheritance Architecture", q: "Which access specifier allows data access strictly within the class itself and its explicitly declared friend functions?", options: ["Public", "Private", "Protected", "Internal"], answer: 1, explanation: "Private members are accessible only inside the class body and by explicitly declared friend functions/classes." },
+  { id: "Q30", cluster: "Inheritance Architecture", q: "Which access specifier allows access within the class and its derived classes, but denies external access?", options: ["Public", "Private", "Protected", "Global"], answer: 2, explanation: "Protected is the middle ground: accessible within the class and its children, but invisible to external code." },
+
+  // Cluster 4
+  { id: "Q31", cluster: "Polymorphism & Virtual Tables", q: "Which statement most accurately defines polymorphism in OOP?", options: ["Ability to inherit from multiple abstract classes", "Capability to use the identical interface to process varying underlying data types", "Hiding structural implementation details", "Operator overloading strictly"], answer: 1, explanation: "Polymorphism = one interface, many behaviors. A base pointer can call different implementations depending on the actual object type at runtime." },
+  { id: "Q32", cluster: "Polymorphism & Virtual Tables", q: "Which of the following achieves static (compile-time) polymorphism?", options: ["Function overloading", "Operator overloading", "Templates", "All of the mentioned"], answer: 3, explanation: "Function overloading, operator overloading, and templates all resolve at compile time → all are static polymorphism." },
+  { id: "Q33", cluster: "Polymorphism & Virtual Tables", q: "How is dynamic (run-time) polymorphism strictly implemented in C++?", options: ["Through Friend functions", "Through standard inheritance", "Through Virtual Functions", "Through static casting"], answer: 2, explanation: "Runtime polymorphism requires the 'virtual' keyword. Without it, calls are resolved at compile time based on pointer type, not actual object type." },
+  { id: "Q34", cluster: "Polymorphism & Virtual Tables", q: "What hidden data structures does the C++ compiler use to route run-time dynamic dispatch?", options: ["Linked Lists and Hash Maps", "Virtual Tables (v-tables) and Virtual Pointers (vptr)", "Binary Search Trees", "Stack pointers"], answer: 1, explanation: "The compiler creates a static v-table (array of function pointers) per class, and injects a hidden vptr into every polymorphic object to point to it." },
+  { id: "Q35", cluster: "Polymorphism & Virtual Tables", q: "Which assertion is entirely factual regarding the architecture of a v-table?", options: ["A unique v-table is created for every object instantiated", "A single v-table is created per class and contains memory addresses of its virtual functions", "It stores constant member variables", "It is generated during runtime"], answer: 1, explanation: "One v-table per CLASS (not per object). Every object gets its own vptr that points to the shared class v-table. This is the memory optimization." },
+  { id: "Q36", cluster: "Polymorphism & Virtual Tables", q: "Why is it an absolute necessity to declare base class destructors as virtual?", options: ["To ensure proper execution of derived class destructors when deleted via base pointer", "To allow function overriding in general", "To minimize heap memory usage", "To support template metaprogramming"], answer: 0, explanation: "Without virtual destructor: deleting a derived object via base pointer only calls the base destructor. Derived's destructor is skipped → memory leak of derived resources." },
+  { id: "Q37", cluster: "Polymorphism & Virtual Tables", q: "What is the exact syntactical definition of a pure virtual function in standard C++?", options: ["A function declared with 'virtual' and appended with = 0;", "A virtual function with no parameters", "A function that cannot be inherited", "An empty virtual destructor"], answer: 0, explanation: "Syntax: virtual void func() = 0; The '= 0' makes it pure virtual, forcing derived classes to provide an implementation." },
+  { id: "Q38", cluster: "Polymorphism & Virtual Tables", q: "What strict constraint automatically transforms a class into an Abstract Class?", options: ["It contains solely private data members", "It possesses no constructors or destructors", "It contains at least one pure virtual function, making it impossible to instantiate directly", "It is declared with the 'final' keyword"], answer: 2, explanation: "Any class with ≥1 pure virtual function becomes abstract. The compiler forbids direct instantiation, enforcing interface contracts on inheritors." },
+  { id: "Q39", cluster: "Polymorphism & Virtual Tables", q: "What happens if a developer executes a virtual function call directly inside a constructor?", options: ["Undefined behavior crashes the application", "The derived class version is executed dynamically", "The virtual mechanism is ignored and the base class version is executed statically", "A compile-time error is thrown"], answer: 2, explanation: "During base constructor execution, the vptr hasn't been updated to the derived v-table yet. Virtual calls resolve statically to the base version — a classic trap!" },
+  { id: "Q40", cluster: "Polymorphism & Virtual Tables", q: "Which modern C++11 specifier ensures a virtual function cannot be overridden in further downstream derivations?", options: ["static", "const", "final", "sealed"], answer: 2, explanation: "'final' seals a virtual function from further overriding. 'sealed' is a C# concept, not C++." },
+
+  // Cluster 5
+  { id: "Q41", cluster: "Static, Friends & RTTI", q: "What defines a friend function in C++?", options: ["A function declared inside another function", "An external non-member function granted explicit authorization to access private and protected members of a class", "A function reserved strictly for templates", "A virtual pointer mechanism"], answer: 1, explanation: "Friend functions are NOT class members. They're external functions granted access to private/protected data — no 'this' pointer, invoked without dot/arrow operator." },
+  { id: "Q42", cluster: "Static, Friends & RTTI", q: "Which statement is categorically true regarding friend functions?", options: ["They are fully integrated member functions of the class", "They are NOT members of the class but are associated with it", "They violate all memory safety protocols", "They cannot be overloaded"], answer: 1, explanation: "Friend functions exist outside the class scope. They receive objects as explicit parameters rather than via 'this'." },
+  { id: "Q43", cluster: "Static, Friends & RTTI", q: "What is the defining characteristic of a static member variable in a C++ class?", options: ["It cannot be modified after initialization", "It is shared identically among all object instances, allocating only one block of memory", "It is always allocated on the stack", "It is completely inaccessible"], answer: 1, explanation: "Static member variables belong to the CLASS, not individual objects. One memory allocation shared across all instances." },
+  { id: "Q44", cluster: "Static, Friends & RTTI", q: "Can a static member function directly access standard non-static data members?", options: ["Yes, without restriction", "No, because a static function lacks a discrete hidden 'this' pointer", "Only protected members", "Only within derived classes"], answer: 1, explanation: "Static functions have no 'this' pointer — they operate on class-level state only. Without 'this', there's no way to identify which object's non-static members to access." },
+  { id: "Q45", cluster: "Static, Friends & RTTI", q: "What is the primary functional use of the hidden 'this' pointer in C++ class mechanics?", options: ["To call constructors manually", "To initialize static variables globally", "To refer to the specific memory address of the current calling object instance", "To allocate heap memory dynamically"], answer: 2, explanation: "'this' is a hidden pointer passed to every non-static member function, pointing to the object that invoked the function." },
+  { id: "Q46", cluster: "Static, Friends & RTTI", q: "What does the acronym RTTI stand for in C++ systems programming?", options: ["Real-Time Type Interface", "Run-Time Type Information", "Run-Time Template Integration", "Random Time Thread Interruption"], answer: 1, explanation: "RTTI = Run-Time Type Information. It enables type identification and safe downcasting in polymorphic hierarchies." },
+  { id: "Q47", cluster: "Static, Friends & RTTI", q: "Which C++ RTTI casting operator safely downcasts base pointers to derived pointers in a polymorphic hierarchy?", options: ["static_cast", "reinterpret_cast", "const_cast", "dynamic_cast"], answer: 3, explanation: "dynamic_cast verifies the actual object type at runtime via RTTI in the v-table. static_cast forces the cast blindly → undefined behavior if wrong type." },
+  { id: "Q48", cluster: "Static, Friends & RTTI", q: "What occurs if a dynamic_cast applied to a POINTER fails at runtime?", options: ["The application instantly crashes", "It throws a std::bad_cast exception", "It safely returns a nullptr", "It defaults to a static cast"], answer: 2, explanation: "Failed dynamic_cast on a pointer → nullptr. The developer should always check: if (ptr) { ... } before using the result." },
+  { id: "Q49", cluster: "Static, Friends & RTTI", q: "What occurs if a dynamic_cast applied to a REFERENCE fails at runtime?", options: ["It returns a null reference", "It throws a std::bad_cast exception", "It causes undefined behavior", "It returns false"], answer: 1, explanation: "References cannot be null in C++, so a failed dynamic_cast on a reference must throw std::bad_cast. Use try-catch to handle it." },
+  { id: "Q50", cluster: "Static, Friends & RTTI", q: "Which C++ keyword is used under RTTI to extract type information of an object at runtime?", options: ["sizeof", "typeof", "typeid", "auto"], answer: 2, explanation: "typeid(obj) returns a std::type_info object with the type name. Works with RTTI enabled. 'typeof' is not standard C++." },
+
+  // BONUS
+  { id: "B01", cluster: "⭐ Bonus Interview Questions", q: "What is the Rule of Three in C++?", options: ["If you define 1 of: destructor/copy constructor/copy assignment, define all 3", "A class must have exactly 3 constructors", "3 access specifiers must always be used", "A virtual function must be overridden 3 times"], answer: 0, explanation: "The Rule of Three: if your class manages a resource (heap memory), you MUST define: destructor, copy constructor, AND copy assignment operator. Missing one leads to double-free or memory leaks." },
+  { id: "B02", cluster: "⭐ Bonus Interview Questions", q: "What is the Rule of Five in Modern C++11?", options: ["A class must have 5 access modifiers", "Extending Rule of Three: also define move constructor and move assignment operator", "5 virtual functions are required", "Five inheritance levels maximum"], answer: 1, explanation: "C++11 adds move semantics. If you write any of the 5 special member functions, define all 5: destructor, copy ctor, copy assignment, move ctor, move assignment." },
+  { id: "B03", cluster: "⭐ Bonus Interview Questions", q: "What is the difference between 'override' and 'virtual' keywords in C++11?", options: ["They are identical", "'override' explicitly tells compiler this function must override a base virtual function — catches typo errors at compile time", "'override' creates a new virtual table", "'virtual' is deprecated in C++11"], answer: 1, explanation: "Writing 'override' on a derived function causes a compile error if no matching virtual function exists in the base. This catches misspellings and signature mismatches." },
+  { id: "B04", cluster: "⭐ Bonus Interview Questions", q: "Can a constructor be called explicitly on an already-constructed object?", options: ["Yes, using placement new", "No, constructors can never be called explicitly", "Yes, using this->Constructor()", "Yes, using the :: scope operator"], answer: 0, explanation: "Placement new allows constructing an object at a specific memory location: new(ptr) ClassName(args). Used in memory pools and custom allocators." },
+  { id: "B05", cluster: "⭐ Bonus Interview Questions", q: "What is an Interface in C++ (it doesn't have a dedicated keyword)?", options: ["Any class with public members", "A class with ALL pure virtual functions and no data members — simulated interface", "A class with only static methods", "A typedef for a class"], answer: 1, explanation: "C++ has no 'interface' keyword. An interface is simulated by an abstract class with ONLY pure virtual functions and no data. Derived classes must implement everything." },
+];
+
+const CLUSTER_COLORS = {
+  "Foundational OOP Semantics": "#00d4ff",
+  "Constructors & Destructors": "#ff6b6b",
+  "Inheritance Architecture": "#51cf66",
+  "Polymorphism & Virtual Tables": "#ffd43b",
+  "Static, Friends & RTTI": "#cc5de8",
+  "⭐ Bonus Interview Questions": "#ff922b",
+};
+
+function CppQuiz() {
+  const [screen, setScreen] = useState("home");
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [answered, setAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [results, setResults] = useState([]);
+  const [filter, setFilter] = useState("All");
+  const [quizQuestions, setQuizQuestions] = useState([]);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [timer, setTimer] = useState(30);
+  const [timerActive, setTimerActive] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (timerActive && !answered && timer > 0) {
+      interval = setInterval(() => setTimer(t => t - 1), 1000);
+    } else if (timer === 0 && !answered) {
+      handleAnswer(-1);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, answered, timer]);
+
+  const startQuiz = (filterCluster) => {
+    const filtered = filterCluster === "All"
+      ? questions
+      : questions.filter(q => q.cluster === filterCluster);
+    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+    setQuizQuestions(shuffled);
+    setCurrent(0);
+    setScore(0);
+    setResults([]);
+    setSelected(null);
+    setAnswered(false);
+    setStreak(0);
+    setMaxStreak(0);
+    setTimer(30);
+    setTimerActive(true);
+    setScreen("quiz");
+  };
+
+  const handleAnswer = (idx) => {
+    if (answered) return;
+    setSelected(idx);
+    setAnswered(true);
+    setTimerActive(false);
+    const q = quizQuestions[current];
+    const correct = idx === q.answer;
+    const newStreak = correct ? streak + 1 : 0;
+    setStreak(newStreak);
+    setMaxStreak(s => Math.max(s, newStreak));
+    if (correct) setScore(s => s + 1);
+    setResults(r => [...r, { ...q, selected: idx, correct }]);
+    setShowExplanation(true);
+  };
+
+  const nextQuestion = () => {
+    if (current + 1 >= quizQuestions.length) {
+      setScreen("result");
+    } else {
+      setCurrent(c => c + 1);
+      setSelected(null);
+      setAnswered(false);
+      setShowExplanation(false);
+      setTimer(30);
+      setTimerActive(true);
+    }
+  };
+
+  const total = quizQuestions.length || questions.length;
+  const q = quizQuestions[current];
+  const pct = quizQuestions.length > 0
+    ? ((current + (answered ? 1 : 0)) / quizQuestions.length) * 100
+    : 0;
+  const clusters = ["All", ...Object.keys(CLUSTER_COLORS)];
+
+  const getGrade = (s, t) => {
+    if (!t) return { grade: "-", label: "Take the quiz", color: "#868e96", emoji: "❔" };
+    const p = s / t;
+    if (p >= 0.9) return { grade: "S", label: "C++ Master", color: "#ffd43b", emoji: "🏆" };
+    if (p >= 0.75) return { grade: "A", label: "Senior Dev", color: "#51cf66", emoji: "🎯" };
+    if (p >= 0.6) return { grade: "B", label: "Mid-Level Dev", color: "#00d4ff", emoji: "💪" };
+    if (p >= 0.4) return { grade: "C", label: "Junior Dev", color: "#ff922b", emoji: "📚" };
+    return { grade: "F", label: "Keep Practicing", color: "#ff6b6b", emoji: "🔁" };
+  };
+
+  const grade = getGrade(score, total);
+
+  if (screen === "home") {
+    return (
+      <div className="app-shell">
+        <div className="badge">⚙️ C++ OOP Deep Dive</div>
+        <div className="title">C++ OOP Interview Quiz</div>
+        <div className="subtitle">
+          50+ interview-grade questions across 5 clusters + bonus round. Each wrong answer comes with a compiler-style explanation.
+        </div>
+        <div className="grid">
+          <div className="stat-card">
+            <div className="stat-label">Question Bank</div>
+            <div className="stat-value">{questions.length} items</div>
+            <div className="stat-sub">Curated for real interviews, not MCQ trivia.</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">Difficulty</div>
+            <div className="stat-value">Mid → Senior</div>
+            <div className="stat-sub">Covers OOP pillars, lifetime, v-tables & RTTI.</div>
+          </div>
+        </div>
+        <div className="cluster-row">
+          {clusters.map(name => (
+            <button
+              key={name}
+              className={"cluster-chip" + (filter === name ? " active" : "")}
+              onClick={() => setFilter(name)}
+              type="button"
+            >
+              {name !== "All" && (
+                <span
+                  className="cluster-dot"
+                  style={{ background: CLUSTER_COLORS[name] }}
+                />
+              )}
+              {name}
+            </button>
+          ))}
+        </div>
+        <button
+          className="btn-primary"
+          type="button"
+          onClick={() => startQuiz(filter)}
+        >
+          Start quiz ({filter})
+        </button>
+      </div>
+    );
+  }
+
+  if (screen === "quiz" && q) {
+    const clusterColor = CLUSTER_COLORS[q.cluster] || "#00d4ff";
+    const timeDanger = timer <= 5;
+
+    return (
+      <div className="app-shell">
+        <div className="question-meta">
+          <span className="tag">
+            {q.id} · {q.cluster}
+          </span>
+          <span className={"timer-pill" + (timeDanger ? " danger" : "")}>
+            ⏱ {timer}s
+          </span>
+        </div>
+
+        <div className="progress-label">
+          <span>Question {current + 1} / {quizQuestions.length}</span>
+          <span>Score: {score}</span>
+        </div>
+        <div className="progress-shell">
+          <div
+            className="progress-fill"
+            style={{ transform: `scaleX(${pct / 100})` }}
+          />
+        </div>
+
+        <div className="question-text">{q.q}</div>
+        <div className="options-grid">
+          {q.options.map((opt, idx) => {
+            const isCorrect = idx === q.answer;
+            const isSelected = idx === selected;
+            let cls = "option-btn";
+            if (answered) {
+              if (isCorrect) cls += " correct disabled";
+              else if (isSelected && !isCorrect) cls += " incorrect disabled";
+              else cls += " disabled";
+            }
+            const labelLetter = String.fromCharCode(65 + idx);
+            return (
+              <button
+                key={idx}
+                type="button"
+                className={cls}
+                onClick={() => handleAnswer(idx)}
+              >
+                <div className="option-index">{labelLetter}</div>
+                <div className="option-label">{opt}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        {showExplanation && (
+          <div className="explanation-box" style={{ borderColor: clusterColor }}>
+            <div className="explanation-header">
+              {selected === q.answer ? "✔ Correct" : "✖ Explanation"}
+            </div>
+            <div>{q.explanation}</div>
+          </div>
+        )}
+
+        <div className="footer-row">
+          <button
+            type="button"
+            className="btn-ghost"
+            onClick={() => setScreen("home")}
+          >
+            ← Exit
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span className="badge-mini">
+              Streak: {streak} (max {maxStreak})
+            </span>
+            <button
+              type="button"
+              className="btn-primary"
+              style={{ width: "auto", paddingInline: 14 }}
+              onClick={nextQuestion}
+            >
+              {current + 1 >= quizQuestions.length ? "View results" : "Next"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="app-shell">
+      <div className="result-header">
+        <div>
+          <div className="title" style={{ marginBottom: 4 }}>
+            Quiz summary
+          </div>
+          <div className="subtitle">
+            You answered {score} out of {total} correctly.
+          </div>
+        </div>
+        <div
+          className="grade-pill"
+          style={{ borderColor: grade.color, color: grade.color }}
+        >
+          <span>{grade.emoji}</span>
+          <span>{grade.grade}</span>
+          <span>· {grade.label}</span>
+        </div>
+      </div>
+
+      <div className="grid">
+        <div className="stat-card">
+          <div className="stat-label">Accuracy</div>
+          <div className="stat-value">
+            {total ? Math.round((score / total) * 100) : 0}%
+          </div>
+          <div className="stat-sub">
+            Max streak: {maxStreak} in a row.
+          </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Questions attempted</div>
+          <div className="stat-value">{results.length}</div>
+          <div className="stat-sub">
+            Review explanations by cluster to plug gaps.
+          </div>
+        </div>
+      </div>
+
+      <div className="result-grid">
+        {results.map(r => {
+          const correctText = r.options[r.answer];
+          const selectedText = r.selected >= 0 ? r.options[r.selected] : "Timed out";
+          return (
+            <div
+              key={r.id}
+              className={
+                "result-card " + (r.correct ? "correct" : "incorrect")
+              }
+            >
+              <div className="result-id">
+                {r.id} · {r.cluster}
+              </div>
+              <div className="result-q">{r.q}</div>
+              <div className="result-ans">
+                <span className="chip-small">
+                  Correct: {correctText}
+                </span>
+              </div>
+              <div className="result-ans">
+                <span className="chip-small">
+                  Your answer: {selectedText}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="footer-row" style={{ marginTop: 16 }}>
+        <button
+          type="button"
+          className="btn-ghost"
+          onClick={() => setScreen("home")}
+        >
+          ← Back to home
+        </button>
+        <button
+          type="button"
+          className="btn-primary"
+          style={{ width: "auto", paddingInline: 16 }}
+          onClick={() => startQuiz("All")}
+        >
+          Retry full quiz
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<CppQuiz />);
+</script>
+</body>
+</html>
